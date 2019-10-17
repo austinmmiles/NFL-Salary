@@ -45,3 +45,6 @@ touchdowns. These players are generally rookies who have yet to prove their valu
 potential to perform much higher than what they are paid for. In the end, the teams with the
 higher offensive ranks are not those who pay the most for their quarterback but those who pay
 well under for what their quarterback is worth.
+
+## View PDF of full report:
+https://github.com/austinmmiles/NFL-Salary/blob/master/NFL%20Salary%20Paper.pdf
