@@ -30,3 +30,18 @@ strategy to get another quarterback, or an amount to offer their current one.
 Questions of Interest:
 Which Quarterback statistics are important to consider when determining their salary for
 the following year? What type of Quarterbacks are getting overpaid or underpaid?
+
+## Conclusion:
+Based on my findings, the most important variables to consider when determining a
+Quarterback’s base salary for the future are completed passes, attempted passes, yards,
+touchdowns and rating. Since the quarterback rating uses these variables as well as interceptions
+to be measured, rating is a strong predictor to use. The base salary is difficult to measure how
+valuable a quarterback is because most contracts are for multiple years and there are many
+factors such as injury and retirement that can affect the quarterback’s performance. By looking at
+individual cases for each player, they generally follow that more touchdowns in a previous
+season leads to a higher base salary. When a team is looking for a new quarterback, they should
+be looking for someone who would accept a low base salary with the potential to have high
+touchdowns. These players are generally rookies who have yet to prove their value but have the
+potential to perform much higher than what they are paid for. In the end, the teams with the
+higher offensive ranks are not those who pay the most for their quarterback but those who pay
+well under for what their quarterback is worth.
