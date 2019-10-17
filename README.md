@@ -1,5 +1,5 @@
 # NFL-Salary
-##Abstract:
+## Abstract:
 A program that determines what variables and statistics are factored in to determine an NFL
 Quarterback’s base salary. This project aspires to give insight to optimal spending on a team’s
 Quarterback and getting value from what they spend. Every Quarterback’s personal and team
@@ -14,7 +14,7 @@ Quarterback’s salary, and football outsiders provided every team’s offensive
 rankings. The conclusions drawn from this project can provide NFL teams a guideline and
 strategy to get another quarterback, or an amount to offer their current one.
 
-##Data:
+## Data:
 1. Player (the player’s name)
 2. Team (the player’s team)
 3. Comp (the number of completed passes)
