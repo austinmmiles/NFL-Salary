@@ -1,0 +1,272 @@
+---
+title: "NFL Salary Research"
+author: "Austin Miles"
+date: "September 9, 2019"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+library(ggplot2)
+library(readxl)
+library(car)
+QB_Stats <- read_excel("QBstats.xlsx")
+QB_Salary <- read_excel("QBsalaray.xlsx")
+for (i in 1: 700){
+  for (j in 1: 1340){
+    if  (QB_Stats[i, "Player"] == QB_Salary[j, "Player"]){
+      if (QB_Stats[i, "Following Year"] == QB_Salary[j, "Year"]){
+        QB_Stats[i, "Following Salary"] = QB_Salary[j, "base"]
+      }}}}
+Following_Salary <- QB_Stats$`Following Salary`
+Player_Name <- QB_Stats$Player
+Comp <- QB_Stats$Comp
+Att <- QB_Stats$Att
+Pct <- QB_Stats$Pct
+Att_PG <- QB_Stats$`Att/G`
+Yards <- QB_Stats$Yds
+Avg <- QB_Stats$Avg
+Yards_PG <- QB_Stats$`Yds/G`
+TD <- QB_Stats$TD
+Int <- QB_Stats$Int
+First_Downs <- QB_Stats$`1st`
+First_Down_Pct <- QB_Stats$`1st%`
+Pass_20 <- QB_Stats$`20+`
+Pass_40 <- QB_Stats$`40+`
+Rating <- QB_Stats$Rate
+Year <- QB_Stats$Year
+QB_Stats$Log_F.Salary <- log(QB_Stats$`Following Salary`)
+```
+
+#Exploratory Analysis
+
+```{r}
+fit <- lm(Following_Salary~Comp+Att+Yards+TD+Int+Rating)
+scatterplotMatrix(~Following_Salary+Comp+Att+Yards+TD+Int+Rating)
+```
+
+```{r}
+avPlots(fit)
+```
+
+Observation 10 seems to be an outlier.
+
+```{r}
+outlierTest(fit)
+```
+
+Based on on the calculated P-Values, observation 10, 22, 103, 57 and 39 are significant outliers.
+```{r}
+summary(fit)
+```
+
+The fitted linear model for the Following Salary of a quarterback based on the Completions, Attempts, Yards, Touchdowns, Interceptions and Rating is:
+
+Following Salary =-213998.6+73459.4(Completions)-29649.4(Attempts)-1073(Yards)+15344.3(Touchdowns)+18900.7(Interceptions)+9957.1(Rating).
+
+```{r}
+comptest <- lm(Following_Salary~Comp)
+atttest <- lm(Following_Salary~Att)
+yardstest <- lm(Following_Salary~Yards)
+tdtest <- lm(Following_Salary~TD)
+inttest <- lm(Following_Salary~Int)
+ratingtest <- lm(Following_Salary~Rating)
+dfComp <- c("Comp SLR Coefficient", (comptest$coefficients[2]))
+dfAtt <- c("Att SLR Coefficient", (atttest$coefficients[2]))
+dfYards <- c("Yards SLR Coefficient", (yardstest$coefficients[2]))
+dfTD <- c("TD SLR Coefficient", (tdtest$coefficients[2]))
+dfInt <- c("Int SLR Coefficient", (inttest$coefficients[2]))
+dfRating <- c("Rating SLR Coefficient", (ratingtest$coefficients[2]))
+df <- data.frame(dfComp, dfAtt, dfYards, dfTD, dfInt, dfRating)
+print.data.frame(df, row.names = FALSE)
+```
+
+Completions has a positive relationship with Following Salary, Attempts has a positive relationship with Following Salary, Yards has a positive relationship with Following Salary, Touchdowns has a positive relationship with Following Salary. Surprisingly, Interceptions has a positive relationship with Following Salary and Rating has a positive relationship with Following Salary.
+
+The positive relationship between Interceptions and Following Salary is probably due to the fact that Quarterback's get paid more for how significant they are to the team, and a quarterback with more attempted passes tend to throw more interceptions.
+
+#Tests for Significance of Predictors in Model:
+
+##Completions:
+Null Hypothesis $H_{0}: \beta_{1}=0,$ Alternative Hypothesis $H_{A}: \beta_{1} \neq 0$.
+```{r}
+#T-Value
+T=fit$coefficients[2]/13265.2
+#Critical Value
+CV=qt(0.995, 601)
+#Test
+abs(T)>CV
+```
+Since the absolute value of the T value is greater than the critical value at level $\alpha=0.01$, the null hypothesis is rejected and it is determined that $\beta_{1} \neq 0$. Therefore Completions is a significant predictor in the model. 
+
+
+##Attempts:
+Null Hypothesis $H_{0}: \beta_{2}=0,$ Alternative Hypothesis $H_{A}: \beta_{2} \neq 0$.
+```{r}
+#T-Value
+T=fit$coefficients[3]/8574.7
+#Critical Value
+CV=qt(0.995, 601)
+#Test
+abs(T)>CV
+```
+Since the absolute value of the T value is greater than the critical value at level $\alpha=0.01$, the null hypothesis is rejected and it is determined that $\beta_{2} \neq 0$. Therefore Attempts is a significant predictor in the model. 
+
+
+##Yards:
+Null Hypothesis $H_{0}: \beta_{3}=0,$ Alternative Hypothesis $H_{A}: \beta_{3} \neq 0$.
+```{r}
+#T-Value
+T=fit$coefficients[4]/931.5
+#Critical Value
+CV=qt(0.995,601)
+#Test
+abs(T)>CV
+```
+Since the absolute value of the T value is less than the critical value at level $\alpha=0.01$, the null hypothesis is not rejected and it is determined that $\beta_{3} = 0$. Therefore Yards is not a significant predictor in the model. 
+
+##Touchdowns:
+Null Hypothesis $H_{0}: \beta_{4}=0,$ Alternative Hypothesis $H_{A}: \beta_{4} \neq 0$.
+```{r}
+#T-Value
+T=fit$coefficients[5]/47055.9
+#Critical Value
+CV=qt(0.995,601)
+#Test
+abs(T)>CV
+```
+Since the absolute value of the T value is less than the critical value at level $\alpha=0.01$, the null hypothesis is not rejected and it is determined that $\beta_{4} = 0$. Therefore Touchdowns is not a significant predictor in the model. 
+
+##Interceptions:
+Null Hypothesis $H_{0}: \beta_{5}=0,$ Alternative Hypothesis $H_{A}: \beta_{5} \neq 0$.
+```{r}
+#T-Value
+T=fit$coefficients[6]/55945.8
+#Critical Value
+CV=qt(0.995,601)
+#Test
+abs(T)>CV
+```
+Since the absolute value of the T value is less than the critical value at level $\alpha=0.01$, the null hypothesis is not rejected and it is determined that $\beta_{5} = 0$. Therefore Interceptions is not a significant predictor in the model. 
+
+##Rating:
+Null Hypothesis $H_{0}: \beta_{6}=0,$ Alternative Hypothesis $H_{A}: \beta_{6} \neq 0$.
+```{r}
+#T-Value
+T=fit$coefficients[7]/20796.3
+#Critical Value
+CV=qt(0.995,601)
+#Test
+abs(T)>CV
+```
+Since the absolute value of the T value is less than the critical value at level $\alpha=0.01$, the null hypothesis is not rejected and it is determined that $\beta_{6} = 0$. Therefore Rating is not a significant predictor in the model.
+
+# Adding Player Name
+
+The following test will determine if the model is improved enough with the inclusion of the predictor Player Name to warrant the increased complextiy of an added predictor. 
+Null Hypothesis $H_0:$ The model without Player Name is sufficient, Alternative Hypothesis $H_A:$ Player Name is a significant addition to the model given the predictors.
+
+```{r}
+fullmodel <- lm(Following_Salary~Comp+Att+Yards+TD+Int+Rating+Player_Name)
+anova(fit,fullmodel)
+```
+The value of the test statistic is 1.4582, the null distribution of the test statistic is $F_{1,450}.$ The P-Value is $0.00175}$, which is less than $\alpha=0.05.$ Therefore the null hypothesis is rejected and it is determined that Player Name is a significant addition to the model. 
+
+```{r}
+plot(fit, which = 1:3)
+plot(fullmodel, which = 1:3)
+```
+```{r}
+c(summary(fit)$r.squared, summary(fullmodel)$r.squared)
+```
+
+```{r}
+c(AIC(fit), AIC(fullmodel))
+```
+
+It is clear that the model with Player Name is a better fit as it has a higher R squared value although the AIC rose slightly.
+
+#Transfroming the Response
+
+```{r}
+logtransform <- lm(log(Following_Salary)~Comp+Att+Yards+TD+Int+Rating+Player_Name)
+plot(logtransform, which = 1:3)
+```
+
+```{r}
+summary(logtransform)$r.squared
+AIC(logtransform)
+```
+The logarigthmicallly transformed response improved the model's adherence to the normality of errors assumption and is the best fit out of the models created.
+
+```{r}
+New_QB_Stats <- na.omit(QB_Stats)
+median(New_QB_Stats$`Following Salary`)
+High_QB_Stats <-subset(QB_Stats ,Following_Salary > 1800000)
+High_QB_lm <- lm(High_QB_Stats$`Following Salary`~High_QB_Stats$Comp+High_QB_Stats$Att+High_QB_Stats$Yds+High_QB_Stats$TD+High_QB_Stats$Int+High_QB_Stats$Rate+High_QB_Stats$Player)
+scatterplotMatrix(~High_QB_Stats$`Following Salary`+High_QB_Stats$Comp+High_QB_Stats$Att+High_QB_Stats$Yds+High_QB_Stats$TD+High_QB_Stats$Int+High_QB_Stats$Rate)
+Low_QB_Stats <- subset(QB_Stats, Following_Salary <= 1800000)
+Low_QB_lm <- lm(Low_QB_Stats$`Following Salary`~Low_QB_Stats$Comp+Low_QB_Stats$Att+Low_QB_Stats$Yds+Low_QB_Stats$TD+Low_QB_Stats$Int+Low_QB_Stats$Rate+Low_QB_Stats$Player)
+scatterplotMatrix(~Low_QB_Stats$`Following Salary`+Low_QB_Stats$Comp+Low_QB_Stats$Att+Low_QB_Stats$Yds+Low_QB_Stats$TD+Low_QB_Stats$Int+Low_QB_Stats$Rate)
+plot(High_QB_lm, which = 1:3)
+plot(Low_QB_lm, which = 1:3)
+summary(High_QB_lm)$r.squared
+summary(Low_QB_lm)$r.squared
+```
+Because of the high R squared value for the model using the dataset of Quarterbacks following salary above the median (of this dataset), we can transform the response of this model to get a stronger fit.
+
+```{r}
+logtransform_high <- lm(log(High_QB_Stats$`Following Salary`)~High_QB_Stats$Comp+High_QB_Stats$Att+High_QB_Stats$Yds+High_QB_Stats$TD+High_QB_Stats$Int+High_QB_Stats$Rate+High_QB_Stats$Player)
+summary(logtransform_high)$r.squared
+```
+
+Since the R squared value is only slightly higher than the log transformed response of the full model which includes all the Quarterbacks in the dataset, we will use that model to estimate a Quarterback's value.
+
+```{r, include=FALSE}
+NFL_Ranks <- read_excel("NFL Team Ranks.xlsx")
+QB_Stats_Rank <- merge(QB_Stats,NFL_Ranks,by=c("Team","Year"))
+QB_Stats_Rank$`OFF. RANK`<- as.numeric(as.character(QB_Stats_Rank$`OFF. RANK`))
+```
+
+```{r}
+scatterplotMatrix(~QB_Stats_Rank$`OFF. RANK`+QB_Stats_Rank$Comp+QB_Stats_Rank$Att+QB_Stats_Rank$Yds+QB_Stats_Rank$TD+QB_Stats_Rank$Rate)
+```
+There seems to be some correlation between the Team's offensive rank and the number of Touchdowns, as well as a correlation between the Team's offensive rank and Quarterback rating.
+
+By eliminating Quarterbacks who have thrown less than 10 touchdowns, we can check if the correlation is improved since the visual above includes 2nd or even 3rd string quarterbacks.
+
+```{r}
+Top_QB_Rank <- subset(QB_Stats_Rank, QB_Stats_Rank$TD > 10)
+scatterplotMatrix(~Top_QB_Rank$`OFF. RANK`+Top_QB_Rank$Comp+Top_QB_Rank$Att+Top_QB_Rank$Yds+Top_QB_Rank$TD+Top_QB_Rank$Rate)
+```
+
+```{r}
+Top_QB_TD_lm <- lm(Top_QB_Rank$`OFF. RANK`~Top_QB_Rank$TD)
+All_QB_TD_lm <- lm(QB_Stats_Rank$`OFF. RANK`~QB_Stats_Rank$TD)
+Top_QB_Rate_lm <- lm(Top_QB_Rank$`OFF. RANK`~Top_QB_Rank$Rate)
+All_QB_Rate_lm <- lm(QB_Stats_Rank$`OFF. RANK`~QB_Stats_Rank$Rate)
+summary(Top_QB_TD_lm)$r.squared
+summary(All_QB_TD_lm)$r.squared
+summary(Top_QB_Rate_lm)$r.squared
+summary(All_QB_Rate_lm)$r.squared
+```
+As you can see, the offensive rank of the Quarterbacks who throw more than 10 Touchdowns regressed on their team's offensive rank has the highest correlation.
+
+```{r}
+summary(Top_QB_Rate_lm)
+```
+
+```{r}
+ggplot(QB_Stats, aes(x = QB_Stats$TD, y = QB_Stats$Log_F.Salary))+ 
+         geom_point(colour = "black", size = .5) + facet_wrap(~QB_Stats$Player)+
+  theme(axis.text=element_text(size=5), strip.text = element_text(size = 5, margin = margin()))
+```
+
+
+
